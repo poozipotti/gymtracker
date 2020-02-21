@@ -1,6 +1,8 @@
 <script>
-  import {useMachine} from "./useMachine";
   import WorkoutDisplay from "./WorkoutDisplay.svelte";
+  import {state as _state}  from "./store.js"
+  $: state = $_state.value
+
 </script>
 
 
@@ -28,15 +30,16 @@
 	}
   .displayContainer {
     display: grid;
-    grid-template-columns: repeat(3,1fr) 
+    grid-template-columns: repeat(1,1fr) ;
+    justify-content: center ;
 
   }
 
 </style>
-
+<h1>
+  {JSON.stringify(state)}
+</h1>
 <h1>Gym Workouts</h1>
 <div class="displayContainer"> 
-<WorkoutDisplay title="Yesterday" mainWorkouts={[{name:"test",id:1},{name:"test2",id:2}]}/>
 <WorkoutDisplay title="Today" />
-<WorkoutDisplay title="Tommorow" />
 </div>

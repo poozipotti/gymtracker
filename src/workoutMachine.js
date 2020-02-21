@@ -1,46 +1,45 @@
+import { Machine, actions } from "xstate";
+const { assign } = actions;
 
-  // Available variables:
-  // - Machine
-  // - interpret
-  // - assign
-  // - send
-  // - sendParent
-  // - spawn
-  // - raise
-  // - actions
-  // - XState (all XState exports)
-  
-const lightMachine = Machine(
+export const workoutMachine = Machine(
   {
-    id: 'light',
-    initial: 'init',
+    id: 'workoutMachine',
+    initial: 'idle',
     context: {
-      unselectedDay: [],
-      selectedDay: null,
-      newWorkout: null
+      mainWorkouts:[],
+      optionalWorkouts: [],
+      newWorkout: '',
     },
     states: {
-      init: {
+      idle: {
         on:{
           ADD_WORKOUT:'adding',
-          SELECT_DAY:'init'
+          SELECT_DAY:'idle'
         }
       },
       adding: {
          on:{
-          FINISH_ADDING:'init',
-          CANCEL_ADDING:'init',
-          EDIT_WORKOUT:'adding'
-        }
+          FINISH_ADDING:{
+            target:'idle',
+            actions:['addWorkout']
+          },
+          CANCEL_ADDING:'idle',
+          EDIT_WORKOUT:{
+            target:'adding',
+            actions:['change']
+          }
+        },
       }
     }
   },
   {
     actions: {
-      FINISH_ADDING: assign((ctx, {evt,id})=>{
-        return {
-          selectedDay:{...selectedDay,workouts:[...workouts,newWorkout]}
-        }
+      change: assign((ctx, {value})=>{
+        return {newWorkout:value}
+      }),
+      addWorkout: assign((ctx)=>{
+        console.log(ctx.newWorkout)
+        return {mainWorkouts:[...ctx.mainWorkouts,{name:ctx.newWorkout}],newWorkout:''}
       })
       // action implementation
     },
